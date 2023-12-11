@@ -5,7 +5,6 @@ import numpy as np
 import seaborn as sns
 from ..matematika.distance import euclidian_distance,kuadrat_jarak
 
-
 class Kmeans:
 
     def __init__(self,cluster:int=2,inital_centroid=None,limit_loop:int=300,konvergen=None,random_state:int=2):

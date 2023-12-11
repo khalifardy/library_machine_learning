@@ -1,14 +1,14 @@
 from setuptools import find_packages, setup
 
-with open("bodronoyo/Readme.md","r") as f:
+with open("INDOML/Readme.md","r") as f:
     deskripsi = f.read()
 
 setup(
-    name="Bodoronoyo",
-    version = "0.0.1",
+    name="INDOML",
+    version = "0.0.6",
     description="package machine learning buatan indonesia",
-    package_dir={"":"bodronoyo"},
-    packages=find_packages(where='bodronoyo'),
+    package_dir={"":"INDOML"},
+    packages=find_packages(where='INDOML'),
     long_description=deskripsi,
     long_description_content_type='text/markdown',
     url = 'https://github.com/khalifardy/library_machine_learning',
@@ -18,7 +18,7 @@ setup(
     classifiers=[
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.10',
     ],
     install_requires = [
         'numpy >= 1.26.2',
