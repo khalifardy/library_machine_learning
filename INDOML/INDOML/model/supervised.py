@@ -6,6 +6,7 @@ class DecisionTree(TreeNode):
         self.__depth = depth
         self.__tree:TreeNode = None
         self.__label:np.ndarray = None
+        self.root = None
     
     @property
     def label(self):
@@ -71,16 +72,18 @@ class DecisionTree(TreeNode):
         X_right, y_right = X[~mask], y[~mask]
         return X_left, y_left, X_right, y_right
 
-    def find_best_split(self,X:np.ndarray, y:np.ndarray,fitur=None):
+    def find_best_split(self,X:np.ndarray, y:np.ndarray,min_fitur=0,max_fitur=None):
         # Mencari pemisah terbaik berdasarkan nilai Gain Ratio
         m, n = X.shape
         best_gain_ratio = 0
         best_feature = None
         best_value = None
-        if fitur == None:
+        if max_fitur == None:
             fitur = [ i for i in range(n)]
         else:
-            fitur = np.random.choice(n, size=fitur, replace=False)
+            if min_fitur != 0:
+                max_fitur = np.random.randint(min_fitur,max_fitur)
+            fitur = np.random.choice(n, size=max_fitur, replace=False)
         
 
         for feature in fitur:
@@ -95,13 +98,15 @@ class DecisionTree(TreeNode):
 
         return best_feature, best_value
     
-    def build_tree(self,X:np.ndarray, y:np.ndarray, depth=0, max_depth=None,max_feature=None):
+    def build_tree(self,X:np.ndarray, y:np.ndarray, depth=0, max_depth=None,max_feature=None,min_fitur=0):
         # Membangun pohon keputusan secara rekursif
         if depth == max_depth or len(np.unique(y)) == 1:
         # Jika mencapai kedalaman maksimum atau semua label sama, buat leaf node
             return TreeNode(result=np.bincount(y).argmax())
 
-        best_feature, best_value = self.find_best_split(X, y,max_feature)
+        best_feature, best_value = self.find_best_split(X, y,min_fitur,max_feature)
+        if depth == 0:
+            self.root = best_feature
 
         if best_feature is None:
             # Jika tidak dapat menemukan pemisah, buat leaf node
@@ -109,21 +114,21 @@ class DecisionTree(TreeNode):
 
         X_left, y_left, X_right, y_right = self.split_data(X, y, best_feature, best_value)
 
-        left_subtree = self.build_tree(X_left, y_left, depth + 1, max_depth,max_feature)
-        right_subtree = self.build_tree(X_right, y_right, depth + 1, max_depth,max_feature)
+        left_subtree = self.build_tree(X_left, y_left, depth + 1, max_depth,max_feature,min_fitur)
+        right_subtree = self.build_tree(X_right, y_right, depth + 1, max_depth,max_feature,min_fitur)
 
         return TreeNode(feature=best_feature, value=best_value, left=left_subtree, right=right_subtree)
     
-    def fit(self,X:np.ndarray,y:np.ndarray,max_feature=None):
-        self.__tree = self.build_tree(X,y,max_depth=self.__depth,max_feature=max_feature)
+    def fit(self,X:np.ndarray,y:np.ndarray,max_feature=None,min_fitur=0):
+        self.__tree = self.build_tree(X,y,max_depth=self.__depth,max_feature=max_feature,min_fitur=min_fitur)
         label = []
         for sam in X:
             label.append(self.predict_tree(self.__tree,sam))
         
         self.__label = np.array(label) 
     
-    def fit_predict(self,X:np.ndarray,y:np.ndarray,max_feature=None):
-        self.fit(X,y,max_feature)
+    def fit_predict(self,X:np.ndarray,y:np.ndarray,max_feature=None,min_fitur=0):
+        self.fit(X,y,max_feature,min_fitur)
         return self.__label
     
     def predict(self,X:np.ndarray):

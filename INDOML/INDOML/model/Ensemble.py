@@ -116,13 +116,14 @@ class Boosting:
         return true/len(y_pred)
 
 class RandomForest:
-    def __init__(self,max_feature:int,max_depth:int=2,random_state:int=None,n_tree:int=3):
+    def __init__(self,max_feature:int,min_fitur:int=0,max_depth:int=2,random_state:int=None,n_tree:int=3):
         self.__max_depth = max_depth
         self.__random_state = random_state
         self.__n_tree = n_tree
         self.__tree = []
         self.__label = None
         self.__max_feature = max_feature
+        self.__min_fitur = min_fitur
     
     @property
     def label(self):
@@ -132,8 +133,16 @@ class RandomForest:
     @label.getter
     def label__(self):
         return self.__label
+
+    @property
+    def tree(self):
+        #ini hanya dekorator
+        pass
+    @tree.getter
+    def tree__(self):
+        return self.__tree
     
-    def fit(self, x:np.ndarray,y:np.ndarray):
+    def fit(self, x:np.ndarray,y:np.ndarray,nama_fitur:list=None):
 
 
         if self.__random_state :
@@ -153,20 +162,24 @@ class RandomForest:
             data_x = np.array(data_x).reshape(x.shape)
             data_y = np.array(data_y)
             obj = DecisionTree(self.__max_depth)
-            obj.fit(data_x,data_y,self.__max_feature)
+            obj.fit(data_x,data_y,self.__max_feature,self.__min_fitur)
             self.__tree.append(obj)
             data_x_oob = np.array([x[i] for i in range(len(x)) if i not in data_terpilih])
             data_y_oob = np.array([y[i] for i in range(len(x)) if i not in data_terpilih])
             
             pred = obj.predict(data_x_oob)
-
-            print(
-                f"model-{i+1} akurasi : {self.score_accuracy(pred,data_y_oob)} dan OOB error : {1-self.score_accuracy(pred,data_y_oob)}"
-            )
+            if nama_fitur != None:
+                print(
+                f"model-{i+1} akurasi : {self.score_accuracy(pred,data_y_oob)} dan OOB error : {1-self.score_accuracy(pred,data_y_oob)} , kolom root : {nama_fitur[obj.root]}"
+                )
+            else:
+                print(
+                    f"model-{i+1} akurasi : {self.score_accuracy(pred,data_y_oob)} dan OOB error : {1-self.score_accuracy(pred,data_y_oob)}"
+                )
         
 
-    def fit_predict(self,x:np.ndarray,y:np.ndarray):
-        self.fit(x,y)
+    def fit_predict(self,x:np.ndarray,y:np.ndarray,nama_fitur=None):
+        self.fit(x,y,nama_fitur)
 
         predict = []
         for data in x:
