@@ -1,6 +1,7 @@
 import numpy as np
 from statistics import mode
 from .supervised import DecisionTree
+from ..datamanipulasi.fold import train_val_split
 
 class Bagging:
     def __init__(self,model, n_model:int = 5,random_state:int=None):
@@ -213,7 +214,63 @@ class RandomForest:
         
         return true/len(y_pred)
 
+class Stacking:
+    def __init__(self,base_model:list,meta_model,val_size=0.2,random_state=None):
+        self.__base_model = base_model
+        self.__meta_model = meta_model
+        self.__label = None
+        self.__val_size = val_size
+        self.__random_state=random_state
+    
+    @property
+    def label(self):
+        #hanya konstruktor
+        pass
+
+    @label.getter
+    def label__(self):
+        return self.__label
+    
+    def fit(self,x:np.ndarray,y:np.ndarray):
+        X_train, X_val, y_train, y_val = train_val_split(x,y,self.__val_size,self.__random_state)
+        pred_base_model = []
+        for m in self.__base_model:
+            pred = m.fit_predict(X_train,y_train)
+            print(
+                f"Model {m.name} akurasi : {self.score_accuracy(pred,y_train)} "
+            )
+            pred_base_model.append(m.predict(X_val))
             
+        
+        data_train_meta = np.column_stack(pred_base_model)
+        prediksi = self.__meta_model.fit_predict(data_train_meta,y_val)
+        self.__label = prediksi
+    
+    def fit_predict(self,x:np.ndarray,y:np.ndarray):
+        self.fit(x,y)
+        return self.__label
+    
+    def predict(self,x:np.ndarray):
+        pred_base_model = []
+        for m in self.__base_model:
+            pred = m.predict(x)
+            pred_base_model.append(pred)
+            
+        data_train_meta = np.column_stack(pred_base_model)
+        prediksi = self.__meta_model.predict(data_train_meta)
+        
+        return prediksi
+        
+
+    def score_accuracy(self,y_pred:np.ndarray,y_true:np.ndarray):
+        true = 0
+        for i in range(len(y_pred)):
+            if y_pred[i] == y_true[i]:
+                true += 1
+        
+        return true/len(y_pred)
+                
+
 
 
         
