@@ -75,6 +75,28 @@ class Visualisasi:
         plt.tight_layout()
         return plt
     
+    def heatmapkor(self):
+        korelasi = self.__data.corr()
+        plt.figure(figsize=(8, 6))
+        sns.heatmap(korelasi, annot=True, cmap='coolwarm', linewidths=.5)
+
+        plt.title('Heatmap Korelasi')
+        plt.show()
+    
+    def regplot(self,colom_x):
+        fig, axes = plt.subplots(1, len(self.__data.columns), figsize=(15, 5))
+        print(axes)
+
+        for index,y in enumerate(self.__data.columns):
+            
+            sns.regplot(x=colom_x, y=y, data=self.__data, ci=None, ax=axes[index])
+        
+        plt.tight_layout
+        plt.show()
+
+    
+
+    
 class Skalasisasi:
     """
     kelas untuk skalasisasi

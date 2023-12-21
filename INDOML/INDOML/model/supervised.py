@@ -159,4 +159,36 @@ class DecisionTree(TreeNode):
         
         return true/len(y_pred)
 
+
+class RegresiLinear:
+    
+    def __init__(self):
+        self.__weight = 0
+        self.__reg = None
+    
+    @property
+    def reg(self):
+        #hanya dekorator
+        pass
+
+    @reg.getter
+    def reg_(self):
+        return self.__reg
+    
+    def fit(self,x:np.ndarray,y:np.ndarray):
+        x_T = np.transpose(x)
+        multiply = x_T @ x 
+        try:
+            inverse = np.linalg.inv(multiply)
+            self.__weight = inverse @ x_T @ y
+        except np.linalg.LinAlgError:
+            print("The matrix is singular and not invertible.")
+        
+    def fit_predict(self, x:np.ndarray, y:np.ndarray):
+        self.fit(x,y)
+        self.__reg = x @ self.__weight
+        return self.__reg
+
+    
+
     
