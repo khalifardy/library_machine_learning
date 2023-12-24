@@ -85,3 +85,24 @@ def visual_silhoutte_dbms(model,title:str,xlabel:str,start:int,end:int,step:int,
 def silhoutte_skor(label:np.ndarray,data:np.ndarray):
     return silhouette_score
 
+
+def mean_absolute_error(y_true:np.ndarray,y_pred:np.ndarray):
+    delta = y_pred - y_true
+    absolut = np.abs(delta)
+    total = np.sum(absolut)
+    return total/len(y_true)
+
+def mean_square_error(y_true:np.ndarray,y_pred:np.ndarray):
+    delta = (y_pred - y_true)**2
+    total = np.sum(delta)
+    return total/len(y_true)
+
+def root_mean_square_eroor(y_true:np.ndarray,y_pred:np.ndarray):
+    mse = mean_square_error(y_true,y_pred)
+    return np.sqrt(mse)
+
+def mean_percentage_error(y_true:np.ndarray,y_pred:np.ndarray):
+    delta = (y_pred - y_true)/y_pred
+    absolut = np.abs(delta)
+    total = np.sum(total)
+    return (total/len(y_pred))*100

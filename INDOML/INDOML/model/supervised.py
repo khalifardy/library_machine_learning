@@ -189,6 +189,6 @@ class RegresiLinear:
         self.__reg = x @ self.__weight
         return self.__reg
 
-    
+
 
     
