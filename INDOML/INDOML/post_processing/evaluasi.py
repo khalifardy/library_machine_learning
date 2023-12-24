@@ -104,5 +104,5 @@ def root_mean_square_eroor(y_true:np.ndarray,y_pred:np.ndarray):
 def mean_percentage_error(y_true:np.ndarray,y_pred:np.ndarray):
     delta = (y_pred - y_true)/y_pred
     absolut = np.abs(delta)
-    total = np.sum(total)
+    total = np.sum(absolut)
     return (total/len(y_pred))*100
