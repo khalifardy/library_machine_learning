@@ -188,6 +188,9 @@ class RegresiLinear:
         self.fit(x,y)
         self.__reg = x @ self.__weight
         return self.__reg
+    
+    def predict(self, x:np.ndarray):
+        return x @ self.__weight
 
 
 

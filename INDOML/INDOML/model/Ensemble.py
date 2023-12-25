@@ -1,6 +1,6 @@
 import numpy as np
 from statistics import mode
-from .supervised import DecisionTree
+from .supervised import DecisionTree,RegresiLinear
 from ..datamanipulasi.fold import train_val_split
 
 class Bagging:
@@ -270,6 +270,41 @@ class Stacking:
         
         return true/len(y_pred)
                 
+
+class BoostingRegressi:
+    def __init__(self,learning_rate:float=0.2,n_estimator=10):
+        self.__learning_rate = learning_rate
+        self.__n_estimator = n_estimator
+        self.__model = []
+    
+    @property
+    def model(self):
+        #ini hanya dekorator
+        pass
+
+    @model.getter
+    def model_(self):
+        return self.__model
+
+    
+    def fit(self,x:np.ndarray,y:np.ndarray):
+        prediksi = np.full_like(y,np.mean(y))
+
+        for _ in range(self.__n_estimator):
+            residual = y - prediksi
+            linear_model = RegresiLinear()
+            linear_model.fit(x,residual)
+            
+            prediksi += self.__learning_rate * linear_model.predict(x)
+            self.__model.append(linear_model)
+    
+    def fit_predict(self,x:np.ndarray,y:np.ndarray):
+        self.fit(x,y)
+        return self.__model[-1].predict(x)
+
+    def predict(self,x:np.ndarray):
+        return self.__model[-1].predict(x)
+    
 
 
 
