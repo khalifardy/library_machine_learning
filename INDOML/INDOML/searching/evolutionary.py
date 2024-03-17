@@ -50,17 +50,20 @@ class AlgoritmaGenetika:
         return parent_indeks
 
     def crossover(self, tipe, parent):
+        
+        parent1 = parent[0][:-1]
+        parent2 = parent[1][:-1]
         if tipe == "single":
             random = np.random.default_rng().integers(self.partisi_kromosom)
-            new_gen1 = parent[0][:random] + parent[1][random:-1]
-            new_gen2 = parent[1][:random] + parent[0][random:-1]
+            new_gen1 = parent1[:random] + parent2[random:]
+            new_gen2 = parent2[:random] + parent1[random:]
         elif tipe == 'double':
             random1 = np.random.default_rng().integers(self.partisi_kromosom)
             random2 = np.random.default_rng().integers(self.partisi_kromosom)
             while random2 == random1:
                 random2 = np.random.default_rng().integers(self.partisi_kromosom)
-            new_gen1 = parent[0][:random1] + parent[1][random1:random2] + parent[0][random2:]
-            new_gen2 = parent[1][:random1] + parent[0][random1:random2] + parent[1][random2:]
+            new_gen1 = parent1[:random1] + parent2[random1:random2] + parent1[random2:]
+            new_gen2 = parent2[:random1] + parent1[random1:random2] + parent2[random2:]
         new_gen1.append(1)
         new_gen2.append(1)
         return new_gen1, new_gen2
@@ -98,6 +101,8 @@ class AlgoritmaGenetika:
         prev_avg_fitness = None
         gen = 0
         count = 0
+        if crossover == 'double' and self.partisi_kromosom <=2:
+            raise Exception("Partisi kromosom harus lebih dari 2")
         while True:
             max_gen = max([self.fitness_function(individu) for individu in populasi])
             print(f"gen-{gen} - best fitnes : {max_gen}")
@@ -111,7 +116,7 @@ class AlgoritmaGenetika:
             if prev_avg_fitness is not None and abs(avg_fitness - prev_avg_fitness) < 0.001:
                 break
             prev_avg_fitness = avg_fitness
-            print(populasi)
+           
             count += 1
             gen += 1
             if iterasi != 0 and count >= iterasi:
