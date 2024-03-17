@@ -276,6 +276,8 @@ class BoostingRegressi:
         self.__learning_rate = learning_rate
         self.__n_estimator = n_estimator
         self.__model = []
+        self.__mean_target = None
+        self.__y = None
     
     @property
     def model(self):
@@ -288,6 +290,8 @@ class BoostingRegressi:
 
     
     def fit(self,x:np.ndarray,y:np.ndarray):
+        self.__mean_target = np.mean(y)
+        self.__y = y
         prediksi = np.full_like(y,np.mean(y))
 
         for _ in range(self.__n_estimator):
@@ -300,10 +304,18 @@ class BoostingRegressi:
     
     def fit_predict(self,x:np.ndarray,y:np.ndarray):
         self.fit(x,y)
-        return self.__model[-1].predict(x)
+        pred = np.full_like(y,self.__mean_target)
+        for mod in self.__model:
+            pred += (self.__learning_rate * mod.predict(x))
+        return pred
 
     def predict(self,x:np.ndarray):
-        return self.__model[-1].predict(x)
+        pred = np.full_like(x,shape=(x.shape[0],),fill_value=self.__mean_target)
+        for mod in self.__model:
+            pred += (self.__learning_rate * mod.predict(x))
+        if len(x.shape)==1:
+            pred = pred[0]
+        return pred
     
 
 
