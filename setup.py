@@ -5,7 +5,7 @@ with open("INDOML/Readme.md","r") as f:
 
 setup(
     name="INDOML",
-    version = "0.0.27",
+    version = "0.0.31",
     description="package machine learning buatan indonesia",
     package_dir={"":"INDOML"},
     packages=find_packages(where='INDOML'),
