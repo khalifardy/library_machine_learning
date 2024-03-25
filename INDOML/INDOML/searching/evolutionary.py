@@ -121,7 +121,7 @@ class AlgoritmaGenetika:
             gen += 1
             if iterasi != 0 and count >= iterasi:
                 break
-        return populasi[0]
+        return populasi[0][:-1]
             
             
         
